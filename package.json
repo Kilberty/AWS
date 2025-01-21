@@ -1,0 +1,33 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-prod": "sls deploy --stage prod",
+    "deploy-dev": "sls deploy --stage dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.5.46",
+    "mysql2": "^3.11.4",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-http": "^3.2.0",
+    "serverless-pseudo-parameters": "^2.6.1"
+  },
+  "devDependencies": {
+    "serverless-webpack": "^5.15.0",
+    "webpack": "^5.96.1"
+  }
+}

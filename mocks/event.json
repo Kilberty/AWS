@@ -1,0 +1,11 @@
+{
+    "resource": "/Funcoes/Listar",
+    "path": "/Funcoes/Listar",
+    "httpMethod": "GET",
+    "headers": {},
+    "queryStringParameters": {
+      "target": "Ponto"
+    },
+    "body": null,
+    "isBase64Encoded": false
+  }

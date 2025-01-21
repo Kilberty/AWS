@@ -1,0 +1,727 @@
+service: Backend # Nome do seu serviço
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: sa-east-1 # Região desejada
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET}
+    DB_HOST: ${env:DB_HOST}
+    DB_USER: ${env:DB_USER}
+    DB_PWD: ${env:DB_PWD}
+    DB_PORT: ${env:DB_PORT}
+    CLIENT_ID: ${env:CLIENT_ID}
+    CLIENT_SECRET: ${env:CLIENT_SECRET}
+    POOL_ID: ${env:POOL_ID}
+    ORIGIN: ${env:ORIGIN}
+    NODE_PATH: "./:/opt/node20/node_modules"
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "cognito-idp:AdminInitiateAuth"
+      Resource: 
+        - "arn:aws:cognito-idp:sa-east-1:717626617280:userpool/${env:POOL_ID}"
+     
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-pseudo-parameters
+
+
+
+
+functions:
+  Funcoes:
+    handler: src/handlers/funcoes/listarFuncoes.handler
+    package:
+      include:
+        - src/handlers/funcoes/listarFuncoes.js
+        - src/services/Funcoes/listarFuncoesService.js
+        - src/database/database.js
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    events:
+      - http:
+          path: /Funcoes/Listar
+          method: get
+          cors:
+            origin: ${env:ORIGIN} # Usa o valor definido no .env
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+          response:
+            headers:
+              Content-Type: "'application/json'"
+              Access-Control-Allow-Origin: "'${env:ORIGIN}'" # Referência ao valor do .env
+              Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Requested-With'"
+            statusCodes:
+              200:
+                pattern: ''
+              401:
+                pattern: '.*Unauthorized.*'
+              403:
+                pattern: '.*Forbidden.*'
+  
+  atualizarFuncoes:
+    handler: src/handlers/funcoes/editarFuncao.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+
+     include:
+        - src/handlers/funcoes/editarFuncao.js
+        - src/services/Funcoes/editarFuncaoService.js
+        - src/database/database.js
+    events:
+      - http:
+          path: /Funcoes/Editar
+          method: patch
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+  
+  idFuncoes:
+    handler: src/handlers/funcoes/idFuncao.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+
+     include:
+        - src/handlers/funcoes/idFuncao.js
+        - src/services/Funcoes/idFuncaoService.js
+        - src/database/database.js
+    events:
+      - http:
+          path: /Funcoes/Info
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+  
+
+   
+  
+  excluirFuncoes:
+    handler: src/handlers/funcoes/excluirFuncao.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/funcoes/excluirFuncao.js
+         - src/services/funcoes/excluirFuncaoService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcoes/Excluir
+          method: delete
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+
+  inserirFuncoes:
+    handler: src/handlers/funcoes/inserirFuncao.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+ 
+     include:
+         - src/handlers/funcoes/inserirFuncao.js
+         - src/services/funcoes/inserirFuncaoService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcoes/Inserir
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+  
+  Funcionarios:
+    handler: src/handlers/Funcionarios/autocompleteFuncionariosHandler.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/Funcionarios/autocompleteFuncionariosHandler.js
+         - src/services/Funcionarios/autocompleteFuncionarios.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcionarios/Listar
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+  
+  editarFuncionarios:
+    handler: src/handlers/Funcionarios/editarFuncionarios.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/Funcionarios/editarFuncionarios.js
+         - src/services/Funcionarios/editarFuncionarioService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcionarios/{id}/editar
+          method: patch
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+  
+  cadastrarFuncionarios:
+    handler: src/handlers/Funcionarios/cadastrarFuncionarios.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/Funcionarios/cadastrarFuncionarios.js
+         - src/services/Funcionarios/cadastrarFuncionariosService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcionarios/Cadastrar
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+
+  
+
+  filtrarFuncionarios:
+    handler: src/handlers/Funcionarios/listarFuncionarios.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+
+     include:
+         - src/handlers/Funcionarios/listarFuncionarios.js
+         - src/services/Funcionarios/listarFuncionariosService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcionarios/Filtrar
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+  
+  excluirFuncionario:
+    handler: src/handlers/Funcionarios/excluirFuncionarios.handler # Corrigido o nome
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+    
+     include:
+         - src/handlers/Funcionarios/excluirFuncionarios.js
+         - src/services/Funcionarios/excluirFuncionariosService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcionarios/{id}/excluir
+          method: delete
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+
+  idFuncionarios:
+    handler: src/handlers/Funcionarios/idFuncionarios.handler # Corrigido o nome
+    layers:
+     - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/Funcionarios/idFuncionarios.js
+         - src/services/Funcionarios/idFuncionariosService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Funcionarios/{id}/editar
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+
+  RegistrarUsuario:
+    handler: src/handlers/users/registro.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+    
+     include:
+         - src/handlers/users/registro.js
+         - src/services/Usuarios/registroService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /User/Add
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+ 
+  ValidarUsuario:
+    handler: src/handlers/users/codigoUser.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/users/codigoUser.js
+         - src/services/Usuarios/codigoUserService.js
+     
+    events:
+      - http:
+          path: /User/Validar
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+  
+  userEmpresa:
+    handler: src/handlers/users/empresa.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/users/empresa.js
+         - src/services/Usuarios/empresa.js
+     
+    events:
+      - http:
+          path: /User/Empresa
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+
+  cadastrarUserEmpresa:
+    handler: src/handlers/users/usuarioEmpresa.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+         - src/handlers/users/codigoUser.js
+         - src/services/Usuarios/codigoUserService.js
+     
+    events:
+      - http:
+          path: /User/Email
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+
+
+
+
+  Login:
+    handler: src/handlers/users/login.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+    
+     include:
+         - src/handlers/users/login.js
+         - src/services/Usuarios/loginService.js
+        
+    events:
+      - http:
+          path: /User/Login
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+  
+  Logout:
+    handler: src/handlers/users/login.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+    
+     include:
+         - src/handlers/users/login.js
+         - src/services/Usuarios/loginService.js
+        
+    events:
+      - http:
+          path: /User/Logout
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+  
+  buscarPonto:
+    handler: src/handlers/Ponto/buscarPonto.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+
+     include:
+         - src/handlers/Ponto/buscarPonto.js
+         - src/services/Ponto/consultaPontoService.js
+         - src/services/Ponto/jornadaInfoService.js
+         - src/services/Ponto/calculoBancoHoras.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Ponto/Buscar
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+  
+  loginPonto:
+    handler: src/handlers/users/loginPonto.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+   
+     include:
+         - src/handlers/users/login.js
+         - src/services/Usuarios/loginService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /User/loginPonto
+          method: post
+          cors:
+            origin: https://registrodepontocontroltek.netlify.app
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+  
+  baterPonto:
+    handler: src/handlers/Ponto/baterPonto.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+   
+     include:
+         - src/handlers/Ponto/baterPonto.js
+         - src/services/Ponto/baterPontoService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Ponto/Registrar
+          method: post
+          cors:
+            origin: https://registrodepontocontroltek.netlify.app
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+
+  PontoFacial:
+    handler: src/handlers/Ponto/baterPontoFacial.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+   
+     include:
+         - src/handlers/Ponto/baterPontoFacial.js
+         - src/services/Ponto/baterPontoFacialService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Ponto/RegistrarFacial
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+
+  PontoFuncionario:
+    handler: src/handlers/Ponto/identificarFuncionario.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+   
+     include:
+         - src/handlers/Ponto/identificarFuncionario.js
+         - src/services/Ponto/idFuncionarioCodigo.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Ponto/Identificar
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+
+  PontoAjustar:
+    handler: src/handlers/Ponto/ajusteDiaPonto.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+   
+     include:
+         - src/handlers/Ponto/ajusteDiaPonto.js
+         - src/services/Ponto/ajusteDiaPontoService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Ponto/AjustarDia
+          method: post
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+
+  PontoHorarioAjustar:
+    handler: src/handlers/Ponto/ajusteHorarioPonto.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+   
+     include:
+         - src/handlers/Ponto/ajusteHorarioPonto.js
+         - src/services/Ponto/ajusteHorarioPontoService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Ponto/AjustarHorario
+          method: patch
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers 
+
+
+  
+  empresaInfo:
+    handler: src/handlers/Empresa/buscarEmpresa.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+     
+     include:
+         - src/handlers/Empresa/buscarEmpresa.js
+         - src/services/Empresa/buscarEmpresaService.js
+         - src/database/database.js
+    events:
+      - http:
+          path: /Empresa/Info
+          method: get
+          cors:
+            origin: ${env:ORIGIN}
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+              - Access-Control-Allow-Origin
+              - Access-Control-Allow-Methods
+              - Access-Control-Allow-Headers
+
+  editarEmpresa:
+    handler: src/handlers/Empresa/editarEmpresa.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+        - src/handlers/Empresa/editarEmpresa.js
+        - src/services/Empresa/editarEmpresaService.js
+        - src/database/database.js  # Inclui somente os arquivos necessários
+    events:
+     - http:
+        path: /Empresa/Editar
+        method: patch
+        cors:
+          origin: ${env:ORIGIN}
+          headers:
+            - Content-Type
+            - Authorization
+            - X-Requested-With
+            - Access-Control-Allow-Origin
+            - Access-Control-Allow-Methods
+            - Access-Control-Allow-Headers
+
+
+  relatorioPonto:
+    handler: src/handlers/Relatorios/relatorioPonto.handler
+    layers:
+      - arn:aws:lambda:sa-east-1:717626617280:layer:nodeModules:22
+    package:
+  
+     include:
+        - src/handlers/Empresa/editarEmpresa.js
+        - src/services/Empresa/editarEmpresaService.js
+        - src/database/database.js  # Inclui somente os arquivos necessários
+    events:
+     - http:
+        path: /Relatorio/Ponto
+        method: get
+        cors:
+          origin: ${env:ORIGIN}
+          headers:
+            - Content-Type
+            - Authorization
+            - X-Requested-With
+            - Access-Control-Allow-Origin
+            - Access-Control-Allow-Methods
+            - Access-Control-Allow-Headers
+
+
+package:
+  exclude:
+   - node_modules/**
+   - mocks/**
+   - nodejs/**
+   
+   
+
+
+
+custom:
+  stage: ${opt:stage, 'dev'}
+ 
+  
+  webpack:
+    includeModules: false
+    packager: 'npm'
+    webpackConfig: './webpack.config.js' # Aponta para o arquivo de configuração do Webpack
+    
+
+
