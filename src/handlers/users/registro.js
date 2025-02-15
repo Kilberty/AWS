@@ -5,7 +5,7 @@ const express = require('express');
 
 const app = express();
 app.use(express.json())
-/*const corsOptions = {
+const corsOptions = {
   origin: '*', // Permite qualquer origem
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // Headers permitidos
@@ -13,7 +13,7 @@ app.use(express.json())
 };
   
   // Aplica o CORS globalmente
-  app.use(cors(corsOptions));*/
+  app.use(cors(corsOptions));
    
   app.post('/User/Add', async (req, res) => {
   try {
